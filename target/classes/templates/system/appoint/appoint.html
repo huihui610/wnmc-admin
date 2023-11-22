@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('患者预约信息列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>排班ID：</label>
+                            <input type="text" name="schId"/>
+                        </li>
+                        <li>
+                            <label>患者编号：</label>
+                            <input type="text" name="patientNo"/>
+                        </li>
+                        <li>
+                            <label>序号：</label>
+                            <input type="text" name="appointNum"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('system:appoint:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('system:appoint:remove')}]];
+    var prefix = ctx + "system/appoint";
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "患者预约信息",
+            columns: [{
+                checkbox: true
+            }, {
+                field: 'schDate',
+                title: '排班日期'
+            }, {
+                field: 'schDoctorName',
+                title: '排班医生'
+            }, {
+                field: 'schNumber',
+                title: '排班号源'
+            }, {
+                field: 'schRemain',
+                title: '剩余号源'
+            }, {
+                field: 'schAddr',
+                title: '就诊地址'
+            },
+                {
+                    field: 'patientNo',
+                    title: '患者编号'
+                }, {
+                    field: 'patientName',
+                    title: '患者姓名'
+                }, {
+                    field: 'cardNumber',
+                    title: '身份证号码'
+                }, {
+                    field: 'phonenumber',
+                    title: '手机号码'
+                },
+                {
+                    field: 'appointNum',
+                    title: '序号'
+                },
+                {
+                    field: 'remark',
+                    title: '备注'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.appointId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.appointId + '\')"><i class="fa fa-remove"></i>取消预约</a>');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

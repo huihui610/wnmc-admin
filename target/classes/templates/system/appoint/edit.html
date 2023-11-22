@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('编辑预约挂号')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-sch-edit" th:object="${sysPatientSch}">
+            <input name="schId" th:field="*{schId}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">排班医生：</label>
+                <div class="col-sm-8">
+                    <input name="schDoctorName" th:field="*{schDoctorName}" class="form-control" type="text" readonly>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">排班日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <input name="schDate" th:value="${#dates.format(sysSch.schDate, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text" disabled>
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">排班号源数：</label>
+                <div class="col-sm-8">
+                    <input name="schNumber" th:field="*{schNumber}" class="form-control" type="text" readonly>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">诊室：</label>
+                <div class="col-sm-8">
+                    <input name="schAddr" th:field="*{schAddr}" class="form-control" type="text" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">预约患者：</label>
+                <div class="col-sm-8">
+                    <select name="patientNo" class="form-control m-b"  required>
+                        <option th:each="patient:${patients}" th:value="${patient.patientNo}" th:text="${'患者名称：' + patient.patientName + ' | 身份证号码：' +  patient.cardNumber}" ></option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "system/sch";
+        $("#form-sch-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/appoint", $('#form-sch-edit').serialize());
+            }
+        }
+
+        $("input[name='schDate']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

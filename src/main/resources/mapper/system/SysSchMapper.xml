@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wnmc.web.mapper.SysSchMapper">
+    
+    <resultMap type="SysSch" id="SysSchResult">
+        <result property="schId"    column="sch_id"    />
+        <result property="schDoctorName"    column="sch_doctor_name"    />
+        <result property="schDate"    column="sch_date"    />
+        <result property="schNumber"    column="sch_number"    />
+        <result property="schRemain"    column="sch_remain"    />
+        <result property="schAddr"    column="sch_addr"    />
+    </resultMap>
+
+    <sql id="selectSysSchVo">
+        select sch_id, sch_doctor_name, sch_date, sch_number,sch_remain, sch_addr from sys_sch
+    </sql>
+
+    <select id="selectSysSchList" parameterType="SysSch" resultMap="SysSchResult">
+        <include refid="selectSysSchVo"/>
+        <where>
+            del_flag = '1'
+            <if test="schDoctorName != null  and schDoctorName != ''"> and sch_doctor_name like concat('%', #{schDoctorName}, '%')</if>
+            <if test="schDate != null "> and sch_date = #{schDate}</if>
+            <if test="schNumber != null "> and sch_number = #{schNumber}</if>
+            <if test="schAddr != null  and schAddr != ''"> and sch_addr = #{schAddr}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysSchBySchId" parameterType="Long" resultMap="SysSchResult">
+        <include refid="selectSysSchVo"/>
+        where sch_id = #{schId}
+    </select>
+        
+    <insert id="insertSysSch" parameterType="SysSch">
+        insert into sys_sch
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="schId != null">sch_id,</if>
+            <if test="schDoctorName != null">sch_doctor_name,</if>
+            <if test="schDate != null">sch_date,</if>
+            <if test="schNumber != null">sch_number,</if>
+            <if test="schRemain != null">sch_remain,</if>
+            <if test="schAddr != null">sch_addr,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="schId != null">#{schId},</if>
+            <if test="schDoctorName != null">#{schDoctorName},</if>
+            <if test="schDate != null">#{schDate},</if>
+            <if test="schNumber != null">#{schNumber},</if>
+            <if test="schRemain != null">#{schRemain},</if>
+            <if test="schAddr != null">#{schAddr},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysSch" parameterType="SysSch">
+        update sys_sch
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="schDoctorName != null">sch_doctor_name = #{schDoctorName},</if>
+            <if test="schDate != null">sch_date = #{schDate},</if>
+            <if test="schNumber != null">sch_number = #{schNumber},</if>
+            <if test="schRemain != null">sch_remain = #{schRemain},</if>
+            <if test="schAddr != null">sch_addr = #{schAddr},</if>
+        </trim>
+        where sch_id = #{schId}
+    </update>
+
+    <delete id="deleteSysSchBySchId" parameterType="Long">
+        update sys_sch set del_flag = '0' where sch_id = #{schId}
+    </delete>
+
+    <delete id="deleteSysSchBySchIds" parameterType="String">
+        update sys_sch set del_flag = '0' where sch_id in
+        <foreach item="schId" collection="array" open="(" separator="," close=")">
+            #{schId}
+        </foreach>
+    </delete>
+    <select id="countSysSchByschDoctorName" parameterType="SysSch"
+            resultType="java.lang.Integer">
+        SELECT count(*) from sys_sch WHERE sch_doctor_name=#{schDoctorName} AND sch_date=#{schDate}
+    </select>
+
+</mapper>

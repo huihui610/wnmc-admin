@@ -1,0 +1,5 @@
+Application Version: ${wnmc.version}
+Spring Boot Version: ${spring-boot.version}
+姓名：杨辉
+学号：20116040030
+课程：医院信息系统实训
